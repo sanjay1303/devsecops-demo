@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Node.js DevOps Demo & Learning Hub</title>
+  <meta name="description" content="A modern, lightweight Node.js demo application designed for learning backend development, REST APIs, and DevOps practices.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header / Navbar -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="logo-title">DevOps Demo Hub</h1>
+          <span class="logo-subtitle">Node.js • Express • Docker • CI/CD</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="status-badge" id="server-status-badge">
+          <span class="status-dot"></span>
+          <span id="status-text">Checking server...</span>
+        </div>
+        <button id="refresh-all-btn" class="btn btn-secondary btn-sm" title="Refresh metrics">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Metrics Overview Cards -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Uptime</span>
+            <span class="metric-icon">⏱️</span>
+          </div>
+          <div class="metric-value" id="uptime-val">--</div>
+          <div class="metric-sub" id="uptime-sub">Server running time</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Memory Heap</span>
+            <span class="metric-icon">🧠</span>
+          </div>
+          <div class="metric-value" id="memory-val">-- MB</div>
+          <div class="metric-sub" id="memory-sub">RSS / Heap total</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Node Runtime</span>
+            <span class="metric-icon">🟢</span>
+          </div>
+          <div class="metric-value" id="node-ver-val">--</div>
+          <div class="metric-sub" id="platform-val">Platform / Arch</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Environment</span>
+            <span class="metric-icon">⚙️</span>
+          </div>
+          <div class="metric-value badge-env" id="env-val">--</div>
+          <div class="metric-sub">Active profile</div>
+        </div>
+      </section>
+
+      <!-- Two Column Layout: API Explorer & Learning Checklist -->
+      <div class="dashboard-columns">
+        <!-- Left: Interactive API Explorer -->
+        <section class="card explorer-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">REST API Explorer</h2>
+              <p class="card-desc">Execute real HTTP requests to the backend</p>
+            </div>
+            <span class="tag">Live Testing</span>
+          </div>
+
+          <div class="api-triggers">
+            <button class="btn btn-pill" id="btn-get-health" data-endpoint="/api/health" data-method="GET">
+              <span class="http-badge get">GET</span> /api/health
+            </button>
+            <button class="btn btn-pill" id="btn-get-info" data-endpoint="/api/info" data-method="GET">
+              <span class="http-badge get">GET</span> /api/info
+            </button>
+            <button class="btn btn-pill" id="btn-get-items" data-endpoint="/api/items" data-method="GET">
+              <span class="http-badge get">GET</span> /api/items
+            </button>
+          </div>
+
+          <div class="response-panel">
+            <div class="response-header">
+              <div class="response-meta">
+                <span id="response-status" class="response-status-tag">Ready</span>
+                <span id="response-time" class="response-time-tag">-- ms</span>
+              </div>
+              <button id="copy-response-btn" class="btn-text" title="Copy JSON">Copy JSON</button>
+            </div>
+            <pre class="json-viewer"><code id="response-output">// Click any API endpoint above to inspect response</code></pre>
+          </div>
+        </section>
+
+        <!-- Right: Learning Roadmap / Items CRUD -->
+        <section class="card roadmap-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">DevOps Learning Tasks</h2>
+              <p class="card-desc">Interactive CRUD synced with backend memory</p>
+            </div>
+            <span class="tag" id="item-count-badge">0 items</span>
+          </div>
+
+          <!-- Add Item Form -->
+          <form id="add-item-form" class="add-form">
+            <input 
+              type="text" 
+              id="new-item-title" 
+              placeholder="e.g. Build CI/CD pipeline..." 
+              required
+              maxlength="80"
+              class="input-text"
+            >
+            <select id="new-item-category" class="select-category">
+              <option value="DevOps">DevOps</option>
+              <option value="Backend">Backend</option>
+              <option value="Testing">Testing</option>
+              <option value="Docker">Docker</option>
+            </select>
+            <button type="submit" class="btn btn-primary" id="btn-add-item">
+              <span>Add</span>
+            </button>
+          </form>
+
+          <!-- List Container -->
+          <div id="items-list" class="items-list">
+            <div class="loading-spinner">Loading tasks...</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Quick DevOps Reference Banner -->
+      <section class="card guide-card">
+        <h3 class="guide-title">🚀 Quick DevOps Commands for this Project</h3>
+        <div class="code-grid">
+          <div class="code-box">
+            <span class="code-label">Run Locally</span>
+            <code>npm install && npm run dev</code>
+          </div>
+          <div class="code-box">
+            <span class="code-label">Run Automated Tests</span>
+            <code>npm test</code>
+          </div>
+          <div class="code-box">
+            <span class="code-label">Build & Run Docker</span>
+            <code>docker build -t devops-demo . && docker run -p 3000:3000 devops-demo</code>
+          </div>
+          <div class="code-box">
+            <span class="code-label">Git Commit & Push</span>
+            <code>git add . && git commit -m "feat: setup node app" && git push</code>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Node.js DevOps Demo • Built for learning & pair programming • 2026</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

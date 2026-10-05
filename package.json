@@ -1,0 +1,26 @@
+{
+  "name": "devops-demo",
+  "version": "1.0.0",
+  "description": "A simple and modern Node.js application for learning and DevOps demonstrations",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/**/*.test.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "devops",
+    "learning",
+    "rest-api"
+  ],
+  "author": "sanjay1303",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
